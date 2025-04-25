@@ -2,91 +2,61 @@
 // Copyright (c) The Social Proof Foundation, LLC.
 // SPDX-License-Identifier: Apache-2.0
 
-use axum::{
-    extract::Path,
-    routing::{get, post},
-    Json, Router,
-};
-use serde::{Deserialize, Serialize};
-use std::net::SocketAddr;
-use tower_http::cors::{Any, CorsLayer};
-use uuid::Uuid;
+use clap::Parser;
+use std::env;
+use std::sync::Arc;
+use mys_config::mys_config_dir;
+use mys_faucet::{create_wallet_context, start_faucet, AppState};
+use mys_faucet::{FaucetConfig, SimpleFaucet};
+use tracing::info;
 
-#[derive(Serialize)]
-struct HealthResponse {
-    status: String,
-}
+const CONCURRENCY_LIMIT: usize = 30;
+const PROM_PORT_ADDR: &str = "0.0.0.0:9184";
 
-#[derive(Deserialize)]
-struct FaucetRequest {
-    recipient: String,
-}
-
-#[derive(Serialize)]
-struct FaucetResponse {
-    task_id: String,
-    message: String,
-}
+// Define the `GIT_REVISION` and `VERSION` consts
+bin_version::bin_version!();
 
 #[tokio::main]
-async fn main() {
-    // Cors layer
-    let cors = CorsLayer::new()
-        .allow_methods(tower_http::cors::Any)
-        .allow_headers(Any)
-        .allow_origin(Any);
+async fn main() -> Result<(), anyhow::Error> {
+    // initialize tracing
+    let _guard = telemetry_subscribers::TelemetryConfig::new()
+        .with_env()
+        .init();
 
-    // Build our application with routes
-    let app = Router::new()
-        .route("/", get(root))
-        .route("/health", get(health))
-        .route("/gas", post(request_gas))
-        .route("/v1/gas", post(request_gas))
-        .route("/v1/status/:task_id", get(request_status))
-        .layer(cors);
+    let config: FaucetConfig = FaucetConfig::parse();
+    let FaucetConfig {
+        wallet_client_timeout_secs,
+        ref write_ahead_log,
+        ..
+    } = config;
 
-    // Get the port from environment variable or default to 5003
-    let port = std::env::var("PORT")
-        .ok()
-        .and_then(|s| s.parse::<u16>().ok())
-        .unwrap_or(5003);
-    
-    let addr = SocketAddr::from(([0, 0, 0, 0], port));
-    println!("Listening on {}", addr);
-    
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
-        .await
+    let context = create_wallet_context(wallet_client_timeout_secs, mys_config_dir()?)?;
+
+    let max_concurrency = match env::var("MAX_CONCURRENCY") {
+        Ok(val) => val.parse::<usize>().unwrap(),
+        _ => CONCURRENCY_LIMIT,
+    };
+    info!("Max concurrency: {max_concurrency}.");
+
+    let prom_binding = PROM_PORT_ADDR.parse().unwrap();
+    info!("Starting Prometheus HTTP endpoint at {}", prom_binding);
+    let registry_service = mysten_metrics::start_prometheus_server(prom_binding);
+    let prometheus_registry = registry_service.default_registry();
+    prometheus_registry
+        .register(mysten_metrics::uptime_metric("faucet", VERSION, "unknown"))
         .unwrap();
-}
 
-async fn root() -> &'static str {
-    "MYS Faucet"
-}
+    let app_state = Arc::new(AppState {
+        faucet: SimpleFaucet::new(
+            context,
+            &prometheus_registry,
+            write_ahead_log,
+            config.clone(),
+        )
+        .await
+        .unwrap(),
+        config,
+    });
 
-async fn health() -> Json<HealthResponse> {
-    Json(HealthResponse {
-        status: "OK".to_string(),
-    })
-}
-
-async fn request_gas(Json(payload): Json<FaucetRequest>) -> Json<FaucetResponse> {
-    // Generate a random task ID
-    let task_id = Uuid::new_v4().to_string();
-    
-    println!("Received gas request for recipient: {}", payload.recipient);
-    
-    Json(FaucetResponse {
-        task_id,
-        message: format!("Request accepted for {}", payload.recipient),
-    })
-}
-
-async fn request_status(Path(task_id): Path<String>) -> Json<FaucetResponse> {
-    println!("Status request for task: {}", task_id);
-    
-    Json(FaucetResponse {
-        task_id,
-        message: "In progress".to_string(),
-    })
+    start_faucet(app_state, max_concurrency, &prometheus_registry).await
 }

@@ -1,56 +1,55 @@
 [package]
 name = "mys-faucet"
-version = "0.1.0"
+version.workspace = true
 edition = "2021"
 authors = ["Mysten Labs <build@mystenlabs.com>"]
 license = "Apache-2.0"
 publish = false
 
 [dependencies]
-anyhow = "1.0.75"
-async-trait = "0.1.74"
-axum = "0.6.20"
-bin-version = "0.2.0"
-clap = { version = "4.4.6", features = ["derive"] }
-dashmap = "5.5.3"
-thiserror = "1.0.49"
-tokio = { version = "1.32.0", features = ["full"] }
-tracing = "0.1.37"
-serde = { version = "1.0.188", features = ["derive"] }
-tower = "0.4.13"
-tower-http = { version = "0.4.4", features = ["cors"] }
-http = "0.2.9"
-futures = "0.3.28"
-uuid = { version = "1.4.1", features = ["v4", "serde"] }
-prometheus = "0.13.3"
-scopeguard = "1.2.0"
-tap = "1.0.1"
-ttl_cache = "0.5.2"
-eyre = "0.6.8"
-tempfile = "3.8.0"
-parking_lot = "0.12.1"
-tonic = "0.9.2"
-reqwest = { version = "0.11.20", features = ["json"] }
-once_cell = "1.18.0"
+anyhow.workspace = true
+async-trait.workspace = true
+axum.workspace = true
+bin-version.workspace = true
+clap.workspace = true
+dashmap.workspace = true
+thiserror.workspace = true
+tokio = { workspace = true, features = ["full"] }
+tracing.workspace = true
+serde.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+http.workspace = true
+futures.workspace = true
+uuid.workspace = true
+prometheus.workspace = true
+scopeguard.workspace = true
+tap.workspace = true
+ttl_cache.workspace = true
+eyre.workspace = true
+tempfile.workspace = true
+parking_lot.workspace = true
+tonic.workspace = true
+reqwest.workspace = true
+once_cell.workspace = true
 tower_governor = "0.4.3"
 
-# Use simplified versions of these dependencies
-mys-json-rpc-types = { path = "./deps/mys-json-rpc-types" }
-mys-types = { path = "./deps/mys-types" }
-mys-config = { path = "./deps/mys-config" }
-mys-keys = { path = "./deps/mys-keys" }
-mys-sdk = { path = "./deps/mys-sdk" }
-mysten-metrics = { path = "./deps/mysten-metrics" }
-telemetry-subscribers = { path = "./deps/telemetry-subscribers" }
-typed-store = { path = "./deps/typed-store" }
-shared-crypto = { path = "./deps/shared-crypto" }
-async-recursion = "1.0.5"
-mysten-network = { path = "./deps/mysten-network" }
+mys-json-rpc-types.workspace = true
+mys-types.workspace = true
+mys-config.workspace = true
+mys-keys.workspace = true
+mys-sdk.workspace = true
+mysten-metrics.workspace = true
+telemetry-subscribers.workspace = true
+typed-store.workspace = true
+shared-crypto.workspace = true
+async-recursion.workspace = true
+mysten-network.workspace = true
 
 [dev-dependencies]
-test-cluster = { path = "./deps/test-cluster" }
-wiremock = "0.5.19"
-serde_json = "1.0.107"
+test-cluster.workspace = true
+wiremock.workspace = true
+serde_json.workspace = true
 
 [[bin]]
 name = "mys-faucet"

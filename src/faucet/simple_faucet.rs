@@ -1,5 +1,4 @@
 // Copyright (c) Mysten Labs, Inc.
-// Copyright (c) The Social Proof Foundation, LLC.
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::faucet::write_ahead_log;
@@ -125,10 +124,8 @@ impl SimpleFaucet {
         let wal = WriteAheadLog::open(wal_path);
         let mut pending = vec![];
 
-        // Ensure channel buffer is never 0 by using max(1, coins.len())
-        let buffer_size = std::cmp::max(1, coins.len());
-        let (producer, consumer) = mpsc::channel(buffer_size);
-        let (batch_producer, batch_consumer) = mpsc::channel(buffer_size);
+        let (producer, consumer) = mpsc::channel(coins.len());
+        let (batch_producer, batch_consumer) = mpsc::channel(coins.len());
 
         let (sender, mut receiver) =
             mpsc::channel::<(Uuid, MysAddress, Vec<u64>)>(config.max_request_queue_length as usize);
@@ -434,7 +431,7 @@ impl SimpleFaucet {
             ?recipient,
             ?coin_id,
             ?uuid,
-            "PayMySo transaction in faucet."
+            "PayMys transaction in faucet."
         );
 
         match timeout(
@@ -448,7 +445,7 @@ impl SimpleFaucet {
                     ?recipient,
                     ?coin_id,
                     ?uuid,
-                    "Failed to execute PayMySo transactions in faucet after {elapsed}. Coin will \
+                    "Failed to execute PayMys transactions in faucet after {elapsed}. Coin will \
                      not be reused."
                 );
 
@@ -500,7 +497,7 @@ impl SimpleFaucet {
                         })
                         .map(|b| b.amount)
                         .unwrap_or_else(|| 0);
-                    info!("MySo used in this tx {}: {}", tx_digest, mys_used);
+                    info!("MYS used in this tx {}: {}", tx_digest, mys_used);
                     self.metrics.balance.add(mys_used as i64);
                 }
 
@@ -617,7 +614,7 @@ impl SimpleFaucet {
                 ?coin_id,
                 ?uuid,
                 ?retry_delay,
-                "PayMySo transaction in faucet failed, previous error: {:?}",
+                "PayMys transaction in faucet failed, previous error: {:?}",
                 &res,
             );
 
@@ -697,7 +694,7 @@ impl SimpleFaucet {
             .await
             .map_err(|e| {
                 anyhow::anyhow!(
-                    "Failed to build PayMySo transaction for coin {:?}, with err {:?}",
+                    "Failed to build PayMys transaction for coin {:?}, with err {:?}",
                     coin_id,
                     e
                 )
@@ -722,7 +719,7 @@ impl SimpleFaucet {
             .to_vec();
         if created.len() != number_of_coins {
             return Err(FaucetError::CoinAmountTransferredIncorrect(format!(
-                "PayMySo Transaction should create exact {:?} new coins, but got {:?}",
+                "PayMys Transaction should create exact {:?} new coins, but got {:?}",
                 number_of_coins, created
             )));
         }
@@ -811,7 +808,7 @@ impl SimpleFaucet {
 
             if number_of_coins as u64 + index > coins_created_for_address.len() as u64 {
                 return Err(FaucetError::CoinAmountTransferredIncorrect(format!(
-                    "PayMySo Transaction should create exact {:?} new coins, but got {:?}",
+                    "PayMys Transaction should create exact {:?} new coins, but got {:?}",
                     number_of_coins as u64 + index,
                     coins_created_for_address.len()
                 )));
@@ -899,7 +896,7 @@ impl Faucet for SimpleFaucet {
 
         let (digest, coin_ids) = self.transfer_gases(amounts, recipient, id).await?;
 
-        info!(uuid = ?id, ?recipient, ?digest, "PayMySo txn succeeded");
+        info!(uuid = ?id, ?recipient, ?digest, "PayMys txn succeeded");
         let mut sent = Vec::with_capacity(coin_ids.len());
         let coin_results =
             futures::future::join_all(coin_ids.iter().map(|coin_id| self.get_coin(*coin_id))).await;
@@ -1502,7 +1499,7 @@ mod tests {
         // Note `gases` does not contain the bad gas.
         let available = faucet.metrics.total_available_coins.get();
         let discarded = faucet.metrics.total_discarded_coins.get();
-        let candidates = faucet.drain_gas_queue(gas_coins.len() - 1).await;
+        let candidates = faucet.drain_gas_queue(gas_coins.len()).await;
         assert_eq!(available as usize, candidates.len());
         assert_eq!(discarded, 1);
         assert_eq!(

@@ -1,1 +1,0 @@
-web: ./mys-faucet --host-ip 0.0.0.0 --port $PORT --write-ahead-log /tmp/faucet-wal

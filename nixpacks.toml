@@ -1,0 +1,2 @@
+[start]
+cmd = "./bin/mys-faucet --port $PORT --host-ip 0.0.0.0 --write-ahead-log /tmp/faucet-wal"

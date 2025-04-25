@@ -1,0 +1,12 @@
+[build]
+builder = "dockerfile"
+
+[deploy]
+startCommand = "./mys-faucet --host-ip 0.0.0.0 --port $PORT --write-ahead-log /tmp/faucet-wal"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on-failure"
+
+[healthcheck]
+path = "/health"
+timeout = 300 

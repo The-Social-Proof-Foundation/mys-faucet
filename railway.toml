@@ -5,7 +5,7 @@ builder = "dockerfile"
 startCommand = "./mys-faucet --host-ip 0.0.0.0 --port $PORT --write-ahead-log /tmp/faucet-wal"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
-restartPolicyType = "on-failure"
+restartPolicyType = "always"
 
 [healthcheck]
 path = "/health"

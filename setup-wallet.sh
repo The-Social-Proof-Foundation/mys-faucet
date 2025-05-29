@@ -23,6 +23,24 @@ echo "🔧 Setting up wallet configuration..."
 echo "📍 Network: $NETWORK_URL"
 echo "💳 Address: $WALLET_ADDRESS"
 
+# Test network connectivity
+echo "🌐 Testing network connectivity..."
+if curl -s --connect-timeout 10 --max-time 20 "$NETWORK_URL" > /dev/null; then
+    echo "✅ Network connectivity test passed"
+else
+    echo "❌ Network connectivity test failed"
+    echo "🔍 Trying alternative connection test..."
+    
+    # Extract hostname from URL for basic connectivity test
+    HOSTNAME=$(echo "$NETWORK_URL" | sed 's|https\?://||' | sed 's|:.*||')
+    if ping -c 3 "$HOSTNAME" > /dev/null 2>&1; then
+        echo "✅ Basic hostname ping successful to $HOSTNAME"
+    else
+        echo "❌ Cannot reach $HOSTNAME"
+        echo "🚨 This may cause connection issues with the MySocial network"
+    fi
+fi
+
 # Create client.yaml
 cat > /app/config/client.yaml << EOF
 keystore:

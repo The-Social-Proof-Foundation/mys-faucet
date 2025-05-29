@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Install network tools for debugging
+apt-get update -qq && apt-get install -y -qq curl iputils-ping
+
 # Create config directory
 mkdir -p /app/config
 
@@ -23,22 +26,35 @@ echo "🔧 Setting up wallet configuration..."
 echo "📍 Network: $NETWORK_URL"
 echo "💳 Address: $WALLET_ADDRESS"
 
-# Test network connectivity
-echo "🌐 Testing network connectivity..."
-if curl -s --connect-timeout 10 --max-time 20 "$NETWORK_URL" > /dev/null; then
-    echo "✅ Network connectivity test passed"
-else
-    echo "❌ Network connectivity test failed"
-    echo "🔍 Trying alternative connection test..."
-    
-    # Extract hostname from URL for basic connectivity test
-    HOSTNAME=$(echo "$NETWORK_URL" | sed 's|https\?://||' | sed 's|:.*||')
-    if ping -c 3 "$HOSTNAME" > /dev/null 2>&1; then
-        echo "✅ Basic hostname ping successful to $HOSTNAME"
+# Test multiple MySocial endpoints to find one that works
+echo "🌐 Testing MySocial network connectivity..."
+
+ENDPOINTS=(
+    "https://fullnode.testnet.mysocial.network:443"
+    "https://fullnode.devnet.mysocial.network:443"
+    "https://fullnode.mainnet.mysocial.network:443"
+    "https://rpc.testnet.mysocial.network:443"
+)
+
+WORKING_ENDPOINT=""
+
+for endpoint in "${ENDPOINTS[@]}"; do
+    echo "🔍 Testing: $endpoint"
+    if curl -s --connect-timeout 5 --max-time 10 "$endpoint" > /dev/null 2>&1; then
+        echo "✅ Connection successful to: $endpoint"
+        WORKING_ENDPOINT="$endpoint"
+        break
     else
-        echo "❌ Cannot reach $HOSTNAME"
-        echo "🚨 This may cause connection issues with the MySocial network"
+        echo "❌ Failed to connect to: $endpoint"
     fi
+done
+
+if [ -z "$WORKING_ENDPOINT" ]; then
+    echo "🚨 No MySocial endpoints are reachable from Railway infrastructure"
+    echo "🔄 Proceeding anyway - this may cause connection failures"
+else
+    echo "🎯 Using working endpoint: $WORKING_ENDPOINT"
+    NETWORK_URL="$WORKING_ENDPOINT"
 fi
 
 # Create client.yaml

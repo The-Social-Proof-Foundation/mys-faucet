@@ -4,9 +4,9 @@
 mkdir -p /app/config
 
 # Check if we have the required environment variables
-if [ -z "$WALLET_ADDRESS" ] || [ -z "$WALLET_PRIVATE_KEY" ] || [ -z "$WALLET_MNEMONIC" ]; then
+if [ -z "$WALLET_ADDRESS" ] || [ -z "$WALLET_PRIVATE_KEY" ]; then
     echo "❌ Missing required wallet environment variables:"
-    echo "   WALLET_ADDRESS, WALLET_PRIVATE_KEY, WALLET_MNEMONIC"
+    echo "   WALLET_ADDRESS, WALLET_PRIVATE_KEY"
     exit 1
 fi
 
@@ -31,15 +31,11 @@ active_env: $NETWORK_ALIAS
 active_address: $WALLET_ADDRESS
 EOF
 
-# Create keystore file (simplified format)
+# Create keystore file with base64-encoded private key
+# The keystore format is just an array of base64-encoded keypairs
 cat > /app/config/mys.keystore << EOF
 [
-  {
-    "address": "$WALLET_ADDRESS",
-    "key_scheme": "ed25519",
-    "private_key": "$WALLET_PRIVATE_KEY",
-    "mnemonic": "$WALLET_MNEMONIC"
-  }
+  "$WALLET_PRIVATE_KEY"
 ]
 EOF
 

@@ -1,9 +1,10 @@
 {
-  "build": {
-    "builder": "RAILPACK",
-    "buildCommand": "mkdir -p bin && cargo build --release -p mys-faucet && cp target/release/mys-faucet bin/"
-  },
-  "deploy": {
-    "startCommand": "./bin/mys-faucet"
-  }
-} 
+    "$schema": "https://railway.com/railway.schema.json",
+    "build": {
+      "builder": "RAILPACK",
+      "buildCommand": "mkdir -p bin && cd ../.. && cargo build --release -p mys-faucet && cp target/release/mys-faucet crates/mys-faucet/bin/ && cp target/release/merge_coins crates/mys-faucet/bin/"
+    },
+    "deploy": {
+      "startCommand": "./bin/mys-faucet"
+    }
+}

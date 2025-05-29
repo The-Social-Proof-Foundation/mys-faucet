@@ -4,9 +4,14 @@
 mkdir -p /app/config
 
 # Check if we have the required environment variables
-if [ -z "$WALLET_ADDRESS" ] || [ -z "$WALLET_PRIVATE_KEY" ]; then
-    echo "❌ Missing required wallet environment variables:"
-    echo "   WALLET_ADDRESS, WALLET_PRIVATE_KEY"
+if [ -z "$WALLET_ADDRESS" ]; then
+    echo "❌ Missing required WALLET_ADDRESS environment variable"
+    exit 1
+fi
+
+# Check that we have either private key OR mnemonic
+if [ -z "$WALLET_PRIVATE_KEY" ] && [ -z "$WALLET_MNEMONIC" ]; then
+    echo "❌ Must provide either WALLET_PRIVATE_KEY or WALLET_MNEMONIC"
     exit 1
 fi
 
@@ -31,16 +36,26 @@ active_env: $NETWORK_ALIAS
 active_address: $WALLET_ADDRESS
 EOF
 
-# Create keystore file with base64-encoded private key
-# The keystore format is just an array of base64-encoded keypairs
-cat > /app/config/mys.keystore << EOF
+# Create keystore file - MySocial format is just an array of base64-encoded keypairs
+if [ ! -z "$WALLET_PRIVATE_KEY" ]; then
+    echo "🔑 Using provided private key"
+    cat > /app/config/mys.keystore << EOF
 [
   "$WALLET_PRIVATE_KEY"
 ]
 EOF
+elif [ ! -z "$WALLET_MNEMONIC" ]; then
+    echo "🎯 Using mnemonic to derive keypair"
+    # For now, we'll require the private key since deriving from mnemonic 
+    # requires more complex crypto operations that would need the mys binary
+    echo "❌ Mnemonic derivation not yet implemented in this script"
+    echo "   Please provide WALLET_PRIVATE_KEY instead"
+    exit 1
+fi
 
 echo "✅ Created client.yaml"
 echo "✅ Created mys.keystore"
+echo "🔄 Backup mnemonic: ${WALLET_MNEMONIC:-"(not provided)"}"
 echo "🚀 Starting MySocial faucet..."
 
 # Start the faucet

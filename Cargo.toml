@@ -21,7 +21,7 @@ axum = { version = "0.7", default-features = false, features = [
     "query",
     "ws",
 ] }
-bin-version = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/bin-version" }
+bin-version = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/bin-version" }
 clap = { version = "4.4", features = ["derive", "wrap_help"] }
 dashmap = "5.5.3"
 thiserror = "1.0.40"
@@ -63,19 +63,19 @@ tower_governor = "0.4.3"
 async-recursion = "1.0.4"
 
 # Git dependencies from your main blockchain repository
-mys-json-rpc-types = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/mys-json-rpc-types" }
-mys-types = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/mys-types" }
-mys-config = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/mys-config" }
-mys-keys = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/mys-keys" }
-mys-sdk = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/mys-sdk" }
-mysten-metrics = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/mysten-metrics" }
-telemetry-subscribers = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/telemetry-subscribers" }
-typed-store = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/typed-store" }
-shared-crypto = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/shared-crypto" }
-mysten-network = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/mysten-network" }
+mys-json-rpc-types = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/mys-json-rpc-types" }
+mys-types = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/mys-types" }
+mys-config = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/mys-config" }
+mys-keys = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/mys-keys" }
+mys-sdk = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/mys-sdk" }
+mysten-metrics = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/mysten-metrics" }
+telemetry-subscribers = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/telemetry-subscribers" }
+typed-store = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/typed-store" }
+shared-crypto = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/shared-crypto" }
+mysten-network = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/mysten-network" }
 
 [dev-dependencies]
-test-cluster = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", path = "crates/test-cluster" }
+test-cluster = { git = "https://github.com/The-Social-Proof-Foundation/mys-core", branch = "main", path = "crates/test-cluster" }
 wiremock = "0.5"
 serde_json = { version = "1.0.95", features = ["preserve_order"] }
 

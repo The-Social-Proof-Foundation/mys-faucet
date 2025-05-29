@@ -1,6 +1,7 @@
 {
   "build": {
-    "builder": "RAILPACK"
+    "builder": "RAILPACK",
+    "buildCommand": "mkdir -p bin && cargo build --release -p mys-faucet && cp target/release/mys-faucet bin/"
   },
   "deploy": {
     "startCommand": "./bin/mys-faucet"

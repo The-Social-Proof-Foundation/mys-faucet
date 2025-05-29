@@ -1,55 +1,82 @@
 [package]
 name = "mys-faucet"
-version.workspace = true
+version = "0.0.1"
 edition = "2021"
 authors = ["Mysten Labs <build@mystenlabs.com>"]
 license = "Apache-2.0"
 publish = false
 
 [dependencies]
-anyhow.workspace = true
-async-trait.workspace = true
-axum.workspace = true
-bin-version.workspace = true
-clap.workspace = true
-dashmap.workspace = true
-thiserror.workspace = true
-tokio = { workspace = true, features = ["full"] }
-tracing.workspace = true
-serde.workspace = true
-tower.workspace = true
-tower-http.workspace = true
-http.workspace = true
-futures.workspace = true
-uuid.workspace = true
-prometheus.workspace = true
-scopeguard.workspace = true
-tap.workspace = true
-ttl_cache.workspace = true
-eyre.workspace = true
-tempfile.workspace = true
-parking_lot.workspace = true
-tonic.workspace = true
-reqwest.workspace = true
-once_cell.workspace = true
+anyhow = "1.0.71"
+async-trait = "0.1.61"
+axum = { version = "0.7", default-features = false, features = [
+    "macros",
+    "tokio",
+    "http1",
+    "http2",
+    "json",
+    "matched-path",
+    "original-uri",
+    "form",
+    "query",
+    "ws",
+] }
+bin-version = { path = "../bin-version" }
+clap = { version = "4.4", features = ["derive", "wrap_help"] }
+dashmap = "5.5.3"
+thiserror = "1.0.40"
+tokio = { version = "1.43.0", features = ["full"] }
+tracing = "0.1.37"
+serde = { version = "1.0.144", features = ["derive", "rc"] }
+tower = { version = "0.4.12", features = [
+    "full",
+    "util",
+    "timeout",
+    "load-shed",
+    "limit",
+] }
+tower-http = { version = "0.5", features = [
+    "cors",
+    "full",
+    "trace",
+    "set-header",
+    "propagate-header",
+] }
+http = "1"
+futures = "0.3.28"
+uuid = { version = "1.1.2", features = ["v4", "fast-rng"] }
+prometheus = "0.13.3"
+scopeguard = "1.1"
+tap = "1.0.1"
+ttl_cache = "0.5.1"
+eyre = "0.6.8"
+tempfile = "3.3.0"
+parking_lot = { version = "0.12.3", features = ["arc_lock"] }
+tonic = { version = "0.12", features = ["zstd", "transport", "tls-webpki-roots"] }
+reqwest = { version = "0.12", default-features = false, features = [
+    "http2",
+    "json",
+    "rustls-tls",
+] }
+once_cell = "1.18.0"
 tower_governor = "0.4.3"
 
-mys-json-rpc-types.workspace = true
-mys-types.workspace = true
-mys-config.workspace = true
-mys-keys.workspace = true
-mys-sdk.workspace = true
-mysten-metrics.workspace = true
-telemetry-subscribers.workspace = true
-typed-store.workspace = true
-shared-crypto.workspace = true
-async-recursion.workspace = true
-mysten-network.workspace = true
+mys-json-rpc-types = { path = "../mys-json-rpc-types" }
+mys-types = { path = "../mys-types" }
+mys-config = { path = "../mys-config" }
+mys-keys = { path = "../mys-keys" }
+mys-sdk = { path = "../mys-sdk" }
+mysten-metrics = { path = "../mysten-metrics" }
+telemetry-subscribers = { path = "../telemetry-subscribers" }
+typed-store = { path = "../typed-store" }
+shared-crypto = { path = "../shared-crypto" }
+async-recursion = "1.0.4"
+mysten-network = { path = "../mysten-network" }
 
 [dev-dependencies]
-test-cluster.workspace = true
-wiremock.workspace = true
-serde_json.workspace = true
+test-cluster = { path = "../test-cluster" }
+wiremock = "0.5"
+serde_json = { version = "1.0.95", features = ["preserve_order"] }
 
 [[bin]]
 name = "mys-faucet"

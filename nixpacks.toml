@@ -1,0 +1,14 @@
+providers = ["rust"]
+
+[phases.build]
+cmds = [
+  'mkdir -p bin',
+  'cargo build --release --target x86_64-unknown-linux-musl',
+  'cp target/x86_64-unknown-linux-musl/release/mys-faucet bin/',
+  'cp target/x86_64-unknown-linux-musl/release/merge_coins bin/',
+  'chmod +x bin/mys-faucet',
+  'chmod +x bin/merge_coins'
+]
+
+[start]
+cmd = './bin/mys-faucet'

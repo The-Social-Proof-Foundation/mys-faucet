@@ -30,10 +30,7 @@ echo "💳 Address: $WALLET_ADDRESS"
 echo "🌐 Testing MySocial network connectivity..."
 
 ENDPOINTS=(
-    "https://fullnode.testnet.mysocial.network:443"
-    "https://fullnode.devnet.mysocial.network:443"
-    "https://fullnode.mainnet.mysocial.network:443"
-    "https://rpc.testnet.mysocial.network:443"
+    "http://fullnode.testnet.mysocial.network:8082"
 )
 
 WORKING_ENDPOINT=""

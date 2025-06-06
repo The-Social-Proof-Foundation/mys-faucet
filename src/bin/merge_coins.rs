@@ -1,6 +1,7 @@
 // Copyright (c) Mysten Labs, Inc.
 // Copyright (c) The Social Proof Foundation, LLC.
 // SPDX-License-Identifier: Apache-2.0
+
 use shared_crypto::intent::Intent;
 use std::{str::FromStr, time::Duration};
 use mys_config::{mys_config_dir, MYS_CLIENT_CONFIG};
@@ -10,7 +11,6 @@ use mys_keys::keystore::AccountKeystore;
 use mys_sdk::wallet_context::WalletContext;
 use mys_types::quorum_driver_types::ExecuteTransactionRequestType;
 use mys_types::{base_types::ObjectID, gas_coin::GasCoin, transaction::Transaction};
-use tracing::info;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {

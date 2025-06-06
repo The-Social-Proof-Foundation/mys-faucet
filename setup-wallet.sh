@@ -89,5 +89,5 @@ echo "✅ Created mys.keystore"
 echo "🔄 Backup mnemonic: ${WALLET_MNEMONIC:-"(not provided)"}"
 echo "🚀 Starting MySocial faucet..."
 
-# Start the faucet
-exec ./bin/mys-faucet --write-ahead-log /app/faucet.wal 
+# Start the faucet with correct host binding for Railway
+exec ./bin/mys-faucet --write-ahead-log /app/faucet.wal --host-ip 0.0.0.0 --port 5003 

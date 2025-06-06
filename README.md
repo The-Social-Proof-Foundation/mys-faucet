@@ -89,6 +89,9 @@ cargo run --bin mys-faucet -- \
 - `TURNSTILE_SECRET_KEY` - Secret key for Cloudflare Turnstile
 - `DISCORD_BOT_PWD` - Password for Discord bot authentication
 - `MAX_CONCURRENCY` - Maximum concurrent requests (default: 30)
+- `WALLET_ADDRESS`
+- `WALLET_MNEMONIC`
+- `WALLET_PRIVATE_KEY`
 
 ## Metrics
 

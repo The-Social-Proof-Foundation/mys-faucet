@@ -3,8 +3,8 @@
 # Install network tools for debugging
 apt-get update -qq && apt-get install -y -qq curl iputils-ping
 
-# Create config directory
-mkdir -p /app/config
+# Create config directory in the default MySocial location
+mkdir -p /root/.mys/mys_config
 
 # Check if we have the required environment variables
 if [ -z "$WALLET_ADDRESS" ]; then
@@ -55,9 +55,9 @@ else
 fi
 
 # Create client.yaml
-cat > /app/config/client.yaml << EOF
+cat > /root/.mys/mys_config/client.yaml << EOF
 keystore:
-  File: /app/config/mys.keystore
+  File: /root/.mys/mys_config/mys.keystore
 envs:
 - alias: $NETWORK_ALIAS
   rpc: $NETWORK_URL
@@ -70,7 +70,7 @@ EOF
 # Create keystore file - MySocial format is just an array of base64-encoded keypairs
 if [ ! -z "$WALLET_PRIVATE_KEY" ]; then
     echo "🔑 Using provided private key"
-    cat > /app/config/mys.keystore << EOF
+    cat > /root/.mys/mys_config/mys.keystore << EOF
 [
   "$WALLET_PRIVATE_KEY"
 ]

@@ -189,7 +189,7 @@ impl Default for FaucetConfig {
             rate_limiter_cleanup_interval_secs: 60,
             auto_split_coins: true,
             min_coin_threshold: 5,
-            split_amount: 0,
+            split_amount: 5000000000,
         }
     }
 }

@@ -30,7 +30,9 @@ use mys_types::quorum_driver_types::ExecuteTransactionRequestType;
 use mys_types::{
     base_types::{ObjectID, MysAddress, TransactionDigest},
     gas_coin::GasCoin,
-    transaction::{Transaction, TransactionData},
+    transaction::{Transaction, TransactionData, TransactionDataAPI},
+    programmable_transaction_builder::ProgrammableTransactionBuilder,
+    gas_coin::MIST_PER_MYS,
 };
 use tokio::sync::{
     mpsc::{self, Receiver, Sender},
@@ -44,11 +46,6 @@ use super::write_ahead_log::WriteAheadLog;
 use crate::{
     BatchFaucetReceipt, BatchSendStatus, BatchSendStatusType, CoinInfo, Faucet, FaucetConfig,
     FaucetError, FaucetReceipt,
-};
-use mys_types::{
-    programmable_transaction_builder::ProgrammableTransactionBuilder,
-    transaction::{TransactionData, Command, Argument},
-    gas_coin::MIST_PER_MYS,
 };
 
 pub struct SimpleFaucet {
@@ -250,12 +247,15 @@ impl SimpleFaucet {
         let mut builder = ProgrammableTransactionBuilder::new();
         
         // Split the coin into multiple smaller coins
-        let amounts_args: Vec<Argument> = split_amounts
-            .iter()
-            .map(|&amount| Argument::Pure(bcs::to_bytes(&amount).unwrap()))
-            .collect();
+        let mut amounts_args = Vec::new();
+        for &amount in split_amounts {
+            amounts_args.push(builder.pure(amount)?);
+        }
             
-        builder.command(Command::SplitCoins(Argument::GasCoin, amounts_args));
+        builder.command(mys_types::transaction::Command::SplitCoins(
+            mys_types::transaction::Argument::GasCoin, 
+            amounts_args
+        ));
         
         let pt = builder.finish();
         

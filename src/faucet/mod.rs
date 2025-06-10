@@ -152,6 +152,18 @@ pub struct FaucetConfig {
     /// used for authenticated mode.
     #[clap(long, default_value_t = 60)]
     pub rate_limiter_cleanup_interval_secs: u64,
+
+    /// Enable on-demand coin splitting when pool runs low
+    #[clap(long, action = clap::ArgAction::Set, default_value_t = true)]
+    pub auto_split_coins: bool,
+
+    /// Minimum number of coins to maintain in pool before triggering on-demand split
+    #[clap(long, default_value_t = 5)]
+    pub min_coin_threshold: usize,
+
+    /// Amount to split from large coins when pool is low (in mist). If 0, auto-calculate
+    #[clap(long, default_value_t = 0)]
+    pub split_amount: u64,
 }
 
 impl Default for FaucetConfig {
@@ -175,6 +187,9 @@ impl Default for FaucetConfig {
             replenish_quota_interval_ms: 10,
             reset_time_interval_secs: 3600 * 12,
             rate_limiter_cleanup_interval_secs: 60,
+            auto_split_coins: true,
+            min_coin_threshold: 5,
+            split_amount: 0,
         }
     }
 }

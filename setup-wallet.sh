@@ -86,7 +86,6 @@ fi
 
 echo "✅ Created client.yaml"
 echo "✅ Created mys.keystore"
-echo "🔄 Backup mnemonic: ${WALLET_MNEMONIC:-"(not provided)"}"
 echo "🚀 Starting MySocial faucet..."
 
 # Start the faucet with correct host binding for Railway

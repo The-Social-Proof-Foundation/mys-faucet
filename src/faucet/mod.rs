@@ -162,7 +162,7 @@ pub struct FaucetConfig {
     pub min_coin_threshold: usize,
 
     /// Amount to split from large coins when pool is low (in mist). If 0, auto-calculate
-    #[clap(long, default_value_t = 0)]
+    #[clap(long, default_value_t = 5000000000)]
     pub split_amount: u64,
 }
 

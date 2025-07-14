@@ -489,7 +489,7 @@ impl SimpleFaucet {
     }
 
     /// Pulls a coin from the queue and makes sure it is fit for use (belongs to the faucet, has
-    /// sufficient balance). If no coins are available, attempts on-demand splitting.
+    /// sufficient balance). If no coins are available, attempts cross-pool fallback and on-demand splitting.
     async fn prepare_gas_coin(
         &self,
         total_amount: u64,
@@ -506,34 +506,57 @@ impl SimpleFaucet {
         let coin_id = if let Some(id) = coin_id {
             id
         } else {
-            // No coins available - try on-demand splitting
-            if self.should_split_coins(config).await {
-                if let Ok(Some(splittable_coin)) = self.find_splittable_coin(config).await {
-                    info!(?uuid, "No coins available, attempting on-demand split");
-                    if self.split_coin_on_demand(splittable_coin, config, uuid).await.is_ok() {
-                        // Try again after splitting
-                        if let Some(new_coin_id) = if for_batch {
-                            self.pop_gas_coin_for_batch(uuid).await
+            info!(?uuid, "No coins available in primary pool, trying fallback strategies");
+            
+            // Strategy 1: Try the other pool if we have coins there
+            let fallback_coin = if for_batch {
+                info!(?uuid, "Trying regular pool as fallback for batch request");
+                self.pop_gas_coin(uuid).await
+            } else {
+                info!(?uuid, "Trying batch pool as fallback for regular request");
+                self.pop_gas_coin_for_batch(uuid).await
+            };
+            
+            if let Some(id) = fallback_coin {
+                info!(?uuid, "Successfully got coin from fallback pool");
+                id
+            } else {
+                // Strategy 2: Try on-demand splitting if enabled and needed
+                if self.should_split_coins(config).await {
+                    if let Ok(Some(splittable_coin)) = self.find_splittable_coin(config).await {
+                        info!(?uuid, "No coins in either pool, attempting on-demand split");
+                        if self.split_coin_on_demand(splittable_coin, config, uuid).await.is_ok() {
+                            // Try again after splitting - prefer original pool first, then fallback
+                            if let Some(new_coin_id) = if for_batch {
+                                self.pop_gas_coin_for_batch(uuid).await
+                            } else {
+                                self.pop_gas_coin(uuid).await
+                            } {
+                                info!(?uuid, "Successfully obtained coin from primary pool after split");
+                                new_coin_id
+                            } else if let Some(fallback_coin_id) = if for_batch {
+                                self.pop_gas_coin(uuid).await
+                            } else {
+                                self.pop_gas_coin_for_batch(uuid).await
+                            } {
+                                info!(?uuid, "Successfully obtained coin from fallback pool after split");
+                                fallback_coin_id
+                            } else {
+                                warn!(?uuid, "Still no coins available after splitting");
+                                return GasCoinResponse::NoGasCoinAvailable;
+                            }
                         } else {
-                            self.pop_gas_coin(uuid).await
-                        } {
-                            info!(?uuid, "Successfully obtained coin after on-demand split");
-                            new_coin_id  // Return the new coin ID to assign to coin_id
-                        } else {
-                            warn!(?uuid, "Still no coins available after splitting");
+                            warn!(?uuid, "On-demand splitting failed");
                             return GasCoinResponse::NoGasCoinAvailable;
                         }
                     } else {
-                        warn!(?uuid, "On-demand splitting failed");
+                        warn!(?uuid, "No splittable coins found for on-demand split");
                         return GasCoinResponse::NoGasCoinAvailable;
                     }
                 } else {
-                    warn!(?uuid, "No splittable coins found for on-demand split");
+                    warn!(?uuid, "No coins available in either pool and splitting not enabled/needed");
                     return GasCoinResponse::NoGasCoinAvailable;
                 }
-            } else {
-                warn!("Failed getting gas coin, try later!");
-                return GasCoinResponse::NoGasCoinAvailable;
             }
         };
 

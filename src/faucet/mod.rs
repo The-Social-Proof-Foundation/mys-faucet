@@ -78,7 +78,7 @@ pub trait Faucet {
     async fn get_batch_send_status(&self, task_id: Uuid) -> Result<BatchSendStatus, FaucetError>;
 }
 
-pub const DEFAULT_AMOUNT: u64 = 1_000_000_000;
+pub const DEFAULT_AMOUNT: u64 = 5_000_000_000;
 pub const DEFAULT_NUM_OF_COINS: usize = 1;
 
 #[derive(Parser, Clone)]
@@ -171,7 +171,7 @@ impl Default for FaucetConfig {
         Self {
             port: 5003,
             host_ip: Ipv4Addr::new(127, 0, 0, 1),
-            amount: 1_000_000_000,
+            amount: 5_000_000_000,
             num_coins: 1,
             request_buffer_size: 10,
             max_request_per_second: 10,

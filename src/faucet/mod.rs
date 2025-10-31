@@ -3,8 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 use crate::FaucetError;
 use async_trait::async_trait;
+use mys_types::base_types::{MysAddress, ObjectID, TransactionDigest};
 use serde::{Deserialize, Serialize};
-use mys_types::base_types::{ObjectID, MysAddress, TransactionDigest};
 use uuid::Uuid;
 
 mod simple_faucet;

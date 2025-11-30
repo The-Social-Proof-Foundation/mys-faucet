@@ -1,7 +1,6 @@
 [build]
 builder = "dockerfile"
 dockerfilePath = "Dockerfile"
-rootDirectory = "../.."
 
 [deploy]
 startCommand = "/app/bin/setup-wallet.sh"

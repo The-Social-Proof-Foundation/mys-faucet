@@ -44,7 +44,8 @@ RUN set -e; \
             echo "Cargo.toml files found:"; \
             find /build-context -name "Cargo.toml" -type f | head -10; \
             exit 1; \
-        fi
+        fi; \
+    fi
 
 # Verify workspace root
 RUN test -f Cargo.toml && test -d crates && test -d external-crates || \

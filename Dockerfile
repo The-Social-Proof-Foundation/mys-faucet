@@ -1,6 +1,5 @@
 # Build application
 FROM rust:1.87-bullseye AS builder
-WORKDIR /app
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
@@ -11,8 +10,45 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy workspace
-COPY . .
+# Copy build context - Railway may send repo root or subdirectory
+COPY . /build-context/
+
+# Find workspace root and set up build directory
+WORKDIR /app
+RUN set -e; \
+    if [ -f /build-context/Cargo.toml ] && [ -d /build-context/crates ]; then \
+        echo "Build context is workspace root"; \
+        cp -r /build-context/* /app/ 2>/dev/null || true; \
+        cp -r /build-context/.[!.]* /app/ 2>/dev/null || true; \
+    elif [ -d /build-context/crates ]; then \
+        echo "Build context has crates directory"; \
+        cp -r /build-context/* /app/ 2>/dev/null || true; \
+        cp -r /build-context/.[!.]* /app/ 2>/dev/null || true; \
+    else \
+        echo "Build context structure:"; \
+        ls -la /build-context/ | head -20; \
+        echo "Searching for workspace root..."; \
+        WORKSPACE_ROOT=$(find /build-context -maxdepth 5 -name "Cargo.toml" -type f ! -path "*/target/*" | head -1 | xargs dirname 2>/dev/null || echo ""); \
+        if [ -n "$WORKSPACE_ROOT" ] && [ "$WORKSPACE_ROOT" != "/build-context" ] && [ -d "$WORKSPACE_ROOT/crates" ]; then \
+            echo "Found workspace root at $WORKSPACE_ROOT"; \
+            cp -r "$WORKSPACE_ROOT"/* /app/ 2>/dev/null || true; \
+            cp -r "$WORKSPACE_ROOT"/.[!.]* /app/ 2>/dev/null || true; \
+        elif [ -f /build-context/Cargo.toml ]; then \
+            echo "Using build-context as workspace root"; \
+            cp -r /build-context/* /app/ 2>/dev/null || true; \
+            cp -r /build-context/.[!.]* /app/ 2>/dev/null || true; \
+        else \
+            echo "ERROR: Cannot locate workspace root"; \
+            echo "Build context contents:"; \
+            ls -la /build-context/; \
+            echo "Cargo.toml files found:"; \
+            find /build-context -name "Cargo.toml" -type f | head -10; \
+            exit 1; \
+        fi
+
+# Verify workspace root
+RUN test -f Cargo.toml && test -d crates && test -d external-crates || \
+    (echo "ERROR: Workspace root verification failed" && ls -la && exit 1)
 
 # Build the faucet binaries
 RUN cargo build --release --bin mys-faucet --bin merge_coins

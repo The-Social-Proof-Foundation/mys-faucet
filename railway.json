@@ -1,0 +1,11 @@
+{
+    "$schema": "https://railway.com/railway.schema.json",
+    "build": {
+        "builder": "DOCKERFILE",
+        "dockerfilePath": "crates/mys-faucet/Dockerfile"
+    },
+    "deploy": {
+        "startCommand": "/app/bin/setup-wallet.sh"
+    }
+}
+

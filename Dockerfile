@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy workspace (build context should be repository root)
+# Copy workspace
 COPY . .
 
 # Build the faucet binaries
@@ -32,7 +32,7 @@ WORKDIR /app
 # Copy binaries and setup script
 COPY --from=builder /app/target/release/mys-faucet /app/bin/
 COPY --from=builder /app/target/release/merge_coins /app/bin/
-COPY crates/mys-faucet/setup-wallet.sh /app/bin/setup-wallet.sh
+COPY --from=builder /app/crates/mys-faucet/setup-wallet.sh /app/bin/setup-wallet.sh
 RUN chmod +x /app/bin/setup-wallet.sh
 
 # Use the setup script as entrypoint

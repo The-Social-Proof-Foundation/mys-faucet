@@ -2,7 +2,7 @@
     "$schema": "https://railway.com/railway.schema.json",
     "build": {
       "builder": "RAILPACK",
-      "buildCommand": "apt-get update && apt-get install -y libclang-dev clang curl && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.87.0 && . $HOME/.cargo/env && mkdir -p crates/mys-faucet/bin && cargo build --release -p mys-faucet && cp target/release/mys-faucet crates/mys-faucet/bin/ && cp target/release/merge_coins crates/mys-faucet/bin/ && cp crates/mys-faucet/setup-wallet.sh crates/mys-faucet/bin/ && chmod +x crates/mys-faucet/bin/setup-wallet.sh"
+      "buildCommand": "apt-get update && apt-get install -y libclang-dev clang curl && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.87.0 && . $HOME/.cargo/env && mkdir -p crates/mys-faucet/bin && cargo build --release --manifest-path crates/mys-faucet/Cargo.toml --bin mys-faucet --bin merge_coins && cp target/release/mys-faucet crates/mys-faucet/bin/ && cp target/release/merge_coins crates/mys-faucet/bin/ && cp crates/mys-faucet/setup-wallet.sh crates/mys-faucet/bin/ && chmod +x crates/mys-faucet/bin/setup-wallet.sh"
     },
     "deploy": {
       "startCommand": "cd crates/mys-faucet && ./bin/setup-wallet.sh"

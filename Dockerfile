@@ -33,10 +33,18 @@ RUN set -e; \
             echo "Found workspace root at $WORKSPACE_ROOT"; \
             cp -r "$WORKSPACE_ROOT"/* /app/ 2>/dev/null || true; \
             cp -r "$WORKSPACE_ROOT"/.[!.]* /app/ 2>/dev/null || true; \
-        elif [ -f /build-context/Cargo.toml ]; then \
-            echo "Using build-context as workspace root"; \
-            cp -r /build-context/* /app/ 2>/dev/null || true; \
-            cp -r /build-context/.[!.]* /app/ 2>/dev/null || true; \
+        elif [ -f /build-context/Cargo.toml ] && [ ! -d /build-context/crates ]; then \
+            echo "ERROR: Railway is building from crates/mys-faucet subdirectory, not repository root."; \
+            echo "Build context only contains:"; \
+            ls -la /build-context/; \
+            echo ""; \
+            echo "SOLUTION: Railway Root Directory must be set to '/' (repository root) in Railway dashboard."; \
+            echo "Go to: Railway Project -> mys-faucet service -> Settings -> Root Directory"; \
+            echo "Set it to '/' or leave it empty/unset."; \
+            echo ""; \
+            echo "The workspace root (with crates/ and external-crates/) is not in the build context."; \
+            echo "Docker cannot access parent directories, so this must be done in Railway settings."; \
+            exit 1; \
         else \
             echo "ERROR: Cannot locate workspace root"; \
             echo "Build context contents:"; \
@@ -49,7 +57,9 @@ RUN set -e; \
 
 # Verify workspace root
 RUN test -f Cargo.toml && test -d crates && test -d external-crates || \
-    (echo "ERROR: Workspace root verification failed" && ls -la && exit 1)
+    (echo "ERROR: Workspace root verification failed - missing crates/ or external-crates/ directories" && \
+     echo "Current directory contents:" && ls -la && \
+     echo "This means Railway Root Directory is not set correctly." && exit 1)
 
 # Build the faucet binaries
 RUN cargo build --release --bin mys-faucet --bin merge_coins

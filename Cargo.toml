@@ -65,6 +65,7 @@ tower_governor = "0.4.3"
 async-recursion = "1.0.4"
 
 # Workspace dependencies
+bin-version.workspace = true
 mys-json-rpc-types.workspace = true
 mys-types.workspace = true
 mys-config.workspace = true

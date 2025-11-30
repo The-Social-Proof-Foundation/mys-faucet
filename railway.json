@@ -2,7 +2,7 @@
     "$schema": "https://railway.com/railway.schema.json",
     "build": {
       "builder": "RAILPACK",
-      "buildCommand": "apt-get update && apt-get install -y libclang-dev clang curl && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.87.0 && . $HOME/.cargo/env && mkdir -p bin && cargo build --release && cp target/release/mys-faucet bin/ && cp target/release/merge_coins bin/ && cp setup-wallet.sh bin/ && chmod +x bin/setup-wallet.sh"
+      "buildCommand": "apt-get update && apt-get install -y libclang-dev clang curl && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.87.0 && . $HOME/.cargo/env && mkdir -p bin && cd .. && cargo build --release -p mys-faucet -p merge_coins && cp target/release/mys-faucet crates/mys-faucet/bin/ && cp target/release/merge_coins crates/mys-faucet/bin/ && cp crates/mys-faucet/setup-wallet.sh crates/mys-faucet/bin/ && chmod +x crates/mys-faucet/bin/setup-wallet.sh"
     },
     "deploy": {
       "startCommand": "./bin/setup-wallet.sh"

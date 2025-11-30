@@ -1,5 +1,6 @@
 # Build application
 FROM rust:1.87-bullseye AS builder
+WORKDIR /app
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \

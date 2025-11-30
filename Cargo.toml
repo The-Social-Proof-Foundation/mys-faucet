@@ -21,7 +21,7 @@ axum = { version = "0.7", default-features = false, features = [
     "query",
     "ws",
 ] }
-bin-version = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
+bin-version.workspace = true
 clap = { version = "4.4", features = ["derive", "wrap_help"] }
 dashmap = "5.5.3"
 thiserror = "1.0.40"
@@ -58,24 +58,27 @@ reqwest = { version = "0.12", default-features = false, features = [
     "json",
     "rustls-tls",
 ] }
+# Use workspace hyper versions for axum-server compatibility
+hyper.workspace = true
+hyper-util.workspace = true
 once_cell = "1.18.0"
 tower_governor = "0.4.3"
 async-recursion = "1.0.4"
 
-# Git dependencies from your main blockchain repository
-mys-json-rpc-types = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-mys-types = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-mys-config = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-mys-keys = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-mys-sdk = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-mysten-metrics = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-telemetry-subscribers = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-typed-store = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-shared-crypto = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
-mysten-network = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
+# Workspace dependencies
+mys-json-rpc-types.workspace = true
+mys-types.workspace = true
+mys-config.workspace = true
+mys-keys.workspace = true
+mys-sdk.workspace = true
+mysten-metrics.workspace = true
+telemetry-subscribers.workspace = true
+typed-store.workspace = true
+shared-crypto.workspace = true
+mysten-network.workspace = true
 
 [dev-dependencies]
-test-cluster = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
+test-cluster.workspace = true
 wiremock = "0.5"
 serde_json = { version = "1.0.95", features = ["preserve_order"] }
 

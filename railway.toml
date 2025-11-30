@@ -1,7 +1,0 @@
-[build]
-builder = "dockerfile"
-dockerfilePath = "crates/mys-faucet/Dockerfile"
-
-[deploy]
-startCommand = "/app/bin/setup-wallet.sh"
-

@@ -21,6 +21,7 @@ axum = { version = "0.7", default-features = false, features = [
     "query",
     "ws",
 ] }
+bin-version.workspace = true
 clap = { version = "4.4", features = ["derive", "wrap_help"] }
 dashmap = "5.5.3"
 thiserror = "1.0.40"
@@ -57,15 +58,14 @@ reqwest = { version = "0.12", default-features = false, features = [
     "json",
     "rustls-tls",
 ] }
-# Use workspace hyper versions for axum-server compatibility
-hyper.workspace = true
-hyper-util.workspace = true
+# Pin hyper versions to match workspace axum-server compatibility
+hyper = "=1.7.0"
+hyper-util = "=0.1.17"
 once_cell = "1.18.0"
 tower_governor = "0.4.3"
 async-recursion = "1.0.4"
 
 # Workspace dependencies
-bin-version.workspace = true
 mys-json-rpc-types.workspace = true
 mys-types.workspace = true
 mys-config.workspace = true

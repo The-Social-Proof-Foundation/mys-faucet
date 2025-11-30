@@ -11,14 +11,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy workspace root files (requires Railway Root Directory to be /)
-COPY Cargo.toml Cargo.lock ./
-COPY rust-toolchain.toml rustfmt.toml ./
-# Copy workspace directories
-COPY crates ./crates
-COPY mys-execution ./mys-execution
-COPY consensus ./consensus
-COPY external-crates ./external-crates
+# Copy workspace
+COPY . .
 
 # Build the faucet binaries
 RUN cargo build --release --bin mys-faucet --bin merge_coins

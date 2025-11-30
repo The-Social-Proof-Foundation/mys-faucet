@@ -1,5 +1,8 @@
 [build]
 builder = "DOCKERFILE"
+# Dockerfile path relative to repository root
+# Note: Railway must be configured to build from repository root (not crates/mys-faucet)
+# Set the root directory in Railway dashboard to "." (repository root)
 dockerfilePath = "crates/mys-faucet/Dockerfile"
 
 [deploy]

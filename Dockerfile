@@ -32,7 +32,7 @@ WORKDIR /app
 # Copy binaries and setup script
 COPY --from=builder /app/target/release/mys-faucet /app/bin/
 COPY --from=builder /app/target/release/merge_coins /app/bin/
-COPY crates/mys-faucet/setup-wallet.sh /app/bin/setup-wallet.sh
+COPY setup-wallet.sh /app/bin/setup-wallet.sh
 RUN chmod +x /app/bin/setup-wallet.sh
 
 # Use the setup script as entrypoint

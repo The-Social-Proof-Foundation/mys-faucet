@@ -1,6 +1,5 @@
 [build]
 builder = "dockerfile"
-rootDirectory = "."
 dockerfilePath = "crates/mys-faucet/Dockerfile"
 
 [deploy]

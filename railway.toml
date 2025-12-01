@@ -1,6 +1,7 @@
 [build]
 builder = "dockerfile"
-rootDirectory = "/"
+# NOTE: Railway MUST be configured in the UI to use repository root as service root directory
+# Go to Railway Dashboard -> Service Settings -> Root Directory -> Set to "/" or repository root
 dockerfilePath = "Dockerfile"
 
 [deploy]

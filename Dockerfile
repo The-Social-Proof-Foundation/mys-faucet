@@ -11,13 +11,8 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy workspace root files
-# Note: Railway should use repository root as build context
-COPY Cargo.toml Cargo.lock ./
-COPY crates crates
-COPY external-crates external-crates
-COPY consensus consensus
-COPY mys-execution mys-execution
+# Copy workspace root (Railway uses repository root as build context)
+COPY . .
 
 # Build the faucet binaries
 RUN cargo build --release --bin mys-faucet --bin merge_coins

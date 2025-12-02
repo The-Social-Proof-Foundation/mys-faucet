@@ -21,7 +21,7 @@ axum = { version = "0.7", default-features = false, features = [
     "query",
     "ws",
 ] }
-bin-version.workspace = true
+bin-version.workspace = { git = "https://github.com/The-Social-Proof-Foundation/mys-core" }
 clap = { version = "4.4", features = ["derive", "wrap_help"] }
 dashmap = "5.5.3"
 thiserror = "1.0.40"

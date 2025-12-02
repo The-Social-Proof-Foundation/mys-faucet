@@ -11,8 +11,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy workspace root (Railway uses repository root as build context)
-# Copy Cargo files first to ensure workspace is recognized
+# Copy workspace root (Railway should use workspace root as build context)
 COPY Cargo.toml Cargo.lock ./
 COPY crates crates
 COPY external-crates external-crates

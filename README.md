@@ -117,4 +117,4 @@ Use `--help` to see all available configuration options.
 
 ## License
 
-Apache-2.0 
+Apache-2.0
